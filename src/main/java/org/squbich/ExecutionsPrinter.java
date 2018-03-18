@@ -1,10 +1,15 @@
 package org.squbich;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.io.Resources;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.squbich.calltree.model.code.JavaFile;
 import org.squbich.calltree.model.code.QualifiedName;
@@ -60,7 +65,7 @@ public class ExecutionsPrinter {
     }
 
     public void print() {
-        CallHierarchy callHierarchy = new CallHierarchy(typeResolver);
+        CallHierarchy callHierarchy = new CallHierarchy(typeResolver, "");
 
         List<ClassRoot> classRoots = new ArrayList<>();
         if (configuration.getRoot().matches(PACKAGE_PATTERN)) {
@@ -75,26 +80,47 @@ public class ExecutionsPrinter {
             classRoots.add(out);
         }
 
-        if (OutputFormat.JSON.equals(configuration.getOutputConfiguration().getFormat())) {
-            try {
-                String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(classRoots);
-                System.out.println(json);
-                FileWriter fileWriter = new FileWriter("d:/data.json");
-                fileWriter.write(json);
-                fileWriter.flush();
+        try {
+//            String json = objectMapper.writeValueAsString(classRoots);
+//            System.out.println(json);
+
+            String hierarchyAsText = null;
+            if (OutputFormat.JSON.equals(configuration.getOutputConfiguration().getFormat())) {
+                hierarchyAsText = objectMapper.writeValueAsString(classRoots);
+            } else if(OutputFormat.HTML.equals(configuration.getOutputConfiguration().getFormat())) {
+                hierarchyAsText = objectMapper.writeValueAsString(classRoots);
             }
-            catch (JsonProcessingException e) {
-                e.printStackTrace();
+            else {
+                throw new RuntimeException("Unsupported output format [format = " + configuration.getOutputConfiguration().getFormat() + "]");
             }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+            System.out.println(hierarchyAsText);
+            save(hierarchyAsText);
         }
-        else {
-            System.out.println(classRoots);
+        catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
     }
 
+    private void save(String hierarchyAsText) {
+        if(configuration.getOutputConfiguration().getTarget() == null) {
+            System.out.println(hierarchyAsText);
+        } else {
+            try {
+                ClassLoader classLoader = getClass().getClassLoader();
+//                File indexTemplateFile = new File(classLoader.getResource("index-all.html").getFile());
+//                String indexTemplate = FileUtils.readFileToString(indexTemplateFile, Charset.forName("UTF-8"));
+                String indexTemplate = Resources.toString(Resources.getResource("index-all.html"), Charset.forName("UTF-8"));
+                String html = indexTemplate.replaceFirst("<<!DATA!>>", hierarchyAsText.replaceAll("\\\"", "\\\\\""));
+
+                FileWriter fileWriter = new FileWriter(configuration.getOutputConfiguration().getTarget());
+                fileWriter.write(html);
+                fileWriter.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     private ObjectMapper createObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

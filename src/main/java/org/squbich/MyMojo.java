@@ -50,8 +50,8 @@ public class MyMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
 
         getLog().debug(baseGroupId);
-        getLog().debug(output.toString());
-        getLog().debug(filter.toString());
+        getLog().info(String.valueOf(output));
+        getLog().info(String.valueOf(filter));
 
         List<File> sourceFiles = new ArrayList<>();
         List<CompiledAggregate> libFiles = new ArrayList<>();
@@ -88,9 +88,9 @@ public class MyMojo extends AbstractMojo {
         if (output == null || (output.getFormat() == null && output.getTarget() == null)) {
             return OutputConfiguration.ofDefault();
         }
-        else if (output.getTarget() == null) {
-            return OutputConfiguration.ofDefaultTarget(output.getFormat());
-        }
+//        else if (output.getTarget() == null) {
+//            return OutputConfiguration.ofDefaultTarget(output.getFormat());
+//        }
         else if (output.getFormat() == null) {
             return OutputConfiguration.ofDefaultFormat(output.getTarget());
         }

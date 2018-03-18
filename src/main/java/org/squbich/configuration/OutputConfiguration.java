@@ -17,12 +17,12 @@ public class OutputConfiguration {
     private static final OutputFormat DEFAULT_FORMAT = OutputFormat.TEXT;
 
     public static final OutputConfiguration ofDefault() {
-        return of(DEFAULT_TARGET, DEFAULT_FORMAT);
+        return of(null, DEFAULT_FORMAT);
     }
 
-    public static final OutputConfiguration ofDefaultTarget(OutputFormat format) {
-        return of(DEFAULT_TARGET, format);
-    }
+//    public static final OutputConfiguration ofDefaultTarget(OutputFormat format) {
+//        return of(DEFAULT_TARGET, format);
+//    }
 
 
     public static final OutputConfiguration ofDefaultFormat(String target) {
