@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Call hierarchy</title>
+    <script src="../assets/libs/vue.min.js"></script>
+    <script src="../assets/libs/jquery-3.2.1.slim.min.js"></script>
+    <script src="../assets/libs/popper-1.12.9.min.js"></script>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="../assets/styles/main.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css"/>
+</head>
+<body>
+
+<div id="application">
+    <div class="classes-list">
+        <div class="general-info top-bar">
+            GENERATED: <<!TIMESTAMP!>>
+        </div>
+        <input type="text" class="form-control" v-model="searchedClass" placeholder="Search classes"/>
+        <div class="">
+            <a href="#" v-for="(classRoot, index) in filterClasses(classes)" v-on:click="showDetails(index)" :class="index === searchedClassesSize - 1 ? 'last' : ''">
+                {{ classRoot.className.packagePart }}.{{ classRoot.className.namePart }}
+            </a>
+        </div>
+    </div>
+    <div v-if="currentClass" class="class-details">
+        <div class="class-details-header top-bar">
+            <div>
+                {{ currentClass.className.packagePart }}.{{ currentClass.className.namePart }}
+            </div>
+            <button class="btn btn-link" v-on:click="showAllMethods()">Show all</button>
+        </div>
+        <input type="text" class="form-control" v-model="searchedExpression[currentClassIndex]" placeholder="Search calls"/>
+
+        <div class="method-root-details" :class="[index === currentClass.methods.length - 1 ? 'last' : '']" v-for="(methodRoot, index) in currentClass.methods" class="">
+            <div class="method-root-details-header" :class="[methodRoot.calls.length === 0 ? 'disable' : '']" v-on:click="showHideMethod(index)">
+                <div v-if="methodRoot.method">
+                    <method v-bind:method="methodRoot.method"></method>
+                </div>
+            </div>
+
+            <div :id="'methodRootDetails' + index" v-if="methodRoot.calls.length !== 0" class="collapse">
+                <div class="method-root-details-body">
+                    <div>
+                        <calls v-bind:current-class-id="currentClassIndex" v-bind:current-method-root-id="index" v-bind:calls="methodRoot.calls"></calls>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="!currentClass" class="empty-class-details">
+        <span>CHOOSE CLASS FROM RIGHT PANEL</span>
+    </div>
+</div>
+
+<script src="data.js"></script>
+<script src="../app/app.js"></script>
+
+</body>
+</html>

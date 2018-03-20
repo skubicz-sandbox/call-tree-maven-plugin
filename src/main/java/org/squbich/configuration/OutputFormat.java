@@ -1,7 +1,6 @@
-package org.squbich;
+package org.squbich.configuration;
 
 public enum OutputFormat {
-    TEXT,
     JSON,
     HTML
 }

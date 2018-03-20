@@ -13,21 +13,17 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.squbich.calltree.filter.FilterConfiguration;
 import org.squbich.calltree.resolver.CompiledAggregate;
 import org.squbich.calltree.resolver.SourceAggregate;
 import org.squbich.calltree.resolver.SourceResolver;
 import org.squbich.calltree.resolver.TypeResolver;
-import org.squbich.configuration.FilterConfiguration;
 import org.squbich.configuration.OutputConfiguration;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.squbich.configuration.PrinterConfiguration;
 
 @Mojo(name = "call-tree", defaultPhase = LifecyclePhase.SITE, requiresDependencyResolution = ResolutionScope.TEST,
         requiresDependencyCollection = ResolutionScope.TEST, requiresProject = true, threadSafe = true)
-public class MyMojo extends AbstractMojo {
+public class CallTreeMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
@@ -35,10 +31,10 @@ public class MyMojo extends AbstractMojo {
     private MavenSession session;
 
     @Parameter(required = true)
-    private String root;
+    private String rootCaller;
 
     @Parameter(defaultValue = "${project.groupId}", readonly = true)
-    private String baseGroupId;
+    private String packageScan;
 
     @Parameter
     private OutputConfiguration output;
@@ -46,12 +42,10 @@ public class MyMojo extends AbstractMojo {
     @Parameter
     private FilterConfiguration filter;
 
-
     public void execute() throws MojoExecutionException {
-
-        getLog().debug(baseGroupId);
-        getLog().info(String.valueOf(output));
-        getLog().info(String.valueOf(filter));
+        getLog().debug(packageScan);
+        getLog().debug(String.valueOf(output));
+        getLog().debug(String.valueOf(filter));
 
         List<File> sourceFiles = new ArrayList<>();
         List<CompiledAggregate> libFiles = new ArrayList<>();
@@ -80,7 +74,8 @@ public class MyMojo extends AbstractMojo {
         TypeResolver typeResolver = new TypeResolver(sourceAggregates, libFiles);
 
 
-        ExecutionsPrinter.of(typeResolver, PrinterConfiguration.of(getRoot(), geOutputConfiguration(), getFilter())).print();
+        CallHierarchyPrinter.of(typeResolver, PrinterConfiguration.of(getRootCaller(), getPackageScan(), geOutputConfiguration(), getFilter()))
+                .print();
 
     }
 
@@ -88,14 +83,8 @@ public class MyMojo extends AbstractMojo {
         if (output == null || (output.getFormat() == null && output.getTarget() == null)) {
             return OutputConfiguration.ofDefault();
         }
-//        else if (output.getTarget() == null) {
-//            return OutputConfiguration.ofDefaultTarget(output.getFormat());
-//        }
-        else if (output.getFormat() == null) {
-            return OutputConfiguration.ofDefaultFormat(output.getTarget());
-        }
 
-        return output;
+        return OutputConfiguration.ofDefaultWhenNull(output.getTarget(), output.getFormat(), output.getElements());
     }
 
     public MavenProject getProject() {
@@ -106,12 +95,12 @@ public class MyMojo extends AbstractMojo {
         return session;
     }
 
-    public String getRoot() {
-        return root;
+    public String getRootCaller() {
+        return rootCaller;
     }
 
-    public String getBaseGroupId() {
-        return baseGroupId;
+    public String getPackageScan() {
+        return packageScan;
     }
 
     public OutputConfiguration getOutput() {

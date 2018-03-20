@@ -1,0 +1,169 @@
+html, body{
+    height:100%;
+}
+
+#application {
+    position: absolute;
+    width: 100%;
+    min-height: calc(100vh);
+}
+
+.classes-list {
+    height: 100%;
+    width: 30%;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    background: #64d8ff none repeat scroll 0 0;
+    z-index: 100;
+    display: inline-table;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #31658f;
+}
+
+.classes-list a:hover, .menu a:visited:hover {
+    background-color: #94e8ff;
+    outline: 0 none;
+    text-decoration: none;
+    color: #31658f;
+}
+.classes-list a.last {
+    border-bottom: 1px solid #31658f;
+}
+.classes-list a {
+    background-color: transparent;
+    border-top: 1px solid #31658f;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 2px;
+    width: 100%;
+    color: #31658f;
+    font-size: 12px;
+    padding: 7px 12px;
+    display: block;
+    text-align: center;
+    cursor: pointer;
+}
+
+.empty-class-details {
+    width: 70%;
+    height: 100%;
+    position: absolute;
+    display: inline-block;
+    line-height: 400px;
+    text-align: center;
+}
+
+.empty-class-details span {
+    font-size: 40px;
+    font-weight: bold;
+    color: #31658f;
+}
+
+.class-details {
+    width: 70%;
+    display: inline-table;
+}
+
+.top-bar {
+    padding: 10px;
+    height: 100px;
+    width: 100%;
+    color: #dddddd;
+    display: inline-table;
+    line-height: 70px;
+    background-color: #31658f;
+}
+
+.general-info {
+    text-align: center;
+    vertical-align: center;
+}
+
+.class-details-header {
+    text-align: right;
+    font-weight: bolder;
+}
+
+.class-details-header div {
+    position: absolute;
+}
+
+.method-root-details {
+    width: 100%;
+
+}
+
+.method-root-details-header {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #ddf8ff;
+    border-top: 1px solid #31658f;
+}
+
+.method-root-details .disable {
+    cursor: default;
+    padding: 10px;
+    color: #666;
+    background-color: #eee;
+    border-top: 1px solid #31658f;
+}
+
+.class-details .last {
+    border-bottom: 1px solid #31658f;
+}
+
+.method-root-details-body {
+    border-top: 1px solid #31658f;
+}
+
+.calls-list {
+    width: 100%;
+    border: 1px solid cornflowerblue;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+}
+
+.calls-list .call-method {
+    border: 1px solid #31658f;
+    background-color: #fefeff;
+    position: absolute;
+    padding: 20px;
+}
+
+.calls-list .call-method .close{
+    position: absolute;
+    right: 5px;
+    top: 0;
+}
+
+.calls-list li {
+    display: block;
+}
+
+.calls-list .empty-method {
+    color: #999;
+}
+
+.call-expression {
+    cursor: pointer;
+    display: inline-block;
+}
+
+.method-details .comment {
+    font-size: 12px;
+}
+
+.method-details .annotation {
+    font-size: 12px;
+}
+
+.method-details .method-name {
+    font-weight: bolder;
+}
